@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
 using Ninject;
-using SaveTime.DataAccess;
 using SaveTime.DataModel.Organization;
 using SaveTime.Web.Admin.Models;
 using SaveTime.Web.Admin.Repo;
@@ -59,8 +52,79 @@ namespace SaveTime.Web.Admin.Controllers
                 _repository.Create(account);
                 return RedirectToAction("Index");
             }
-
             return View(accountViewModel);
+        }
+
+        public ActionResult Details(int id)
+        {
+            var account = _repository.GetEntity(id);
+            if (account == null)
+                return HttpNotFound();
+            AccountEditViewModel accountEditViewModel = new AccountEditViewModel() 
+            { 
+                Email=account.Email,
+                Id=account.Id,
+                Password=account.Password,
+                Phone=account.Phone
+            };
+            return View(accountEditViewModel);
+        }
+        public ActionResult Edit(int id)
+        {
+            Account account = _repository.GetEntity(id);
+            if (account == null)
+                return HttpNotFound();
+            AccountEditViewModel accountEditViewModel = new AccountEditViewModel()
+            {
+                Email = account.Email,
+                Id = account.Id,
+                Password = account.Password,
+                Phone = account.Phone
+            };
+            return View(accountEditViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(AccountEditViewModel accountEditViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                Account account = new Account()
+                {
+                    Email = accountEditViewModel.Email,
+                    Id = accountEditViewModel.Id,
+                    Phone = accountEditViewModel.Phone,
+                    Password = accountEditViewModel.Password
+                };
+                _repository.Update(account);
+                return RedirectToAction("Index");
+            }
+            return View(accountEditViewModel);
+        }
+
+        public ActionResult Delete(int id)
+        {
+            Account account = _repository.GetEntity(id);
+            if (account == null)
+                return HttpNotFound();
+            AccountEditViewModel accountEditViewModel = new AccountEditViewModel()
+            {
+                Email = account.Email,
+                Id = account.Id,
+                Password = account.Password,
+                Phone = account.Phone
+            };
+            return View(accountEditViewModel);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Account account = _repository.GetEntity(id);
+            _repository.Delete(account);
+            return RedirectToAction("Index");
         }
     }
 }

@@ -12,7 +12,7 @@ namespace SaveTime.Web.Admin
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Employee", action = "Create", id = UrlParameter.Optional }
+                defaults: new { controller = "Branch", action = "Index", id = UrlParameter.Optional }
             );
         }
     }

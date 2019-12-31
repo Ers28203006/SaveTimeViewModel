@@ -1,23 +1,48 @@
 ﻿using SaveTime.DataAccess;
-using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-using System.Web;
 
 namespace SaveTime.Web.Admin.Repo.Impl
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private SaveTimeModel context = new SaveTimeModel();
+        private DbContext _context;
+        private DbSet<T> _db;
+
+        public Repository()
+        {
+            _context = new SaveTimeModel();
+            _db = _context.Set<T>();
+        }
         public void Create(T item)
         {
-            context.Set<T>().Add(item);
-            context.SaveChanges();
+            _db.Add(item);
+            _context.SaveChanges();
+        }
+
+        public void Delete(T item)
+        {
+            _db.Remove(item);
+            _context.SaveChanges();
         }
 
         public IEnumerable<T> GetAll()
         {
-            return context.Set<T>().ToList();
+            return _db.ToList();
+        }
+
+        public T GetEntity(int id)
+        {
+            return _db.Find(id);
+        } 
+        public void Update(T item)
+        {
+            if (item != null)
+            {
+                _context.Entry(item).State = EntityState.Modified;
+                _context.SaveChanges();
+            }
         }
     }
 }

@@ -10,5 +10,8 @@ namespace SaveTime.Web.Admin.Repo
     {
         void Create(T item);
         IEnumerable<T> GetAll();
+        T GetEntity(int id);
+        void Delete(T item);
+        void Update(T item);
     }
 }
